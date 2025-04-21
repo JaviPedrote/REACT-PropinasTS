@@ -1,30 +1,40 @@
-import { orderItem } from "../types";
+import { OrderItem } from "../types";
+import { formatCurrency } from "../utils/formatCurrency";
 
-type orderTotalsProps = {
-    order: orderItem[];
-    propina:number
-    guardarOrden:() => void
-    };
+interface Props {
+  order: OrderItem[];
+  propina: number;
+  guardarOrden: () => void;
+}
 
-export const OrderTotals = ({order,propina,guardarOrden}:orderTotalsProps) => {
-
-    const subtotal = order.reduce((total, item) => total + (item.price * item.cantidad), 0);
-    const formatPropina = subtotal*propina
-    const total = subtotal+formatPropina
-
+export function OrderTotals({ order, propina, guardarOrden }: Props) {
+  const subtotal = order.reduce(
+    (acc, item) => acc + item.cantidad * item.price,
+    0
+  );
+  const tipAmount = subtotal * propina;
+  const total = subtotal + tipAmount;
 
   return (
-    <>
-        <div className="space-y-3"> 
-            <h2 className="font-black text-xl md:text-2xl">Totales y Propina:</h2>
-                <p>Subtotal a pagar: <span className="font-bold"> {subtotal}€</span></p>
-                <p>Propina: <span className="font-bold"> {formatPropina}€</span></p>
-                <p>Total a pagar: <span className="font-bold"> {total}€</span></p>
-                
-        </div>
+    <div className="space-y-4 pt-8">
+      <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Totales</h2>
+      <p>
+        Subtotal: <span className="font-semibold">{formatCurrency(subtotal)}</span>
+      </p>
+      <p>
+        Propina: <span className="font-semibold">{formatCurrency(tipAmount)}</span>
+      </p>
+      <p className="text-xl">
+        Total: <span className="font-bold">{formatCurrency(total)}</span>
+      </p>
 
-        <button className="cursor-pointer w-full text-white bg-black p-3 uppercase font-bold mt-10 disabled:opacity-10 disabled:cursor-default"
-        disabled={total<=0} onClick={guardarOrden}>Guardar orden</button>
-    </>
-  )
+      <button
+        className="w-full rounded-xl bg-teal-600 py-3 font-bold text-white shadow transition hover:bg-teal-700 disabled:opacity-40 dark:bg-teal-500 dark:hover:bg-teal-600"
+        onClick={guardarOrden}
+        disabled={order.length === 0}
+      >
+        Guardar Orden
+      </button>
+    </div>
+  );
 }

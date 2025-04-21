@@ -1,44 +1,46 @@
 import MenuItem from "./components/MenuItem";
-import { OrderContens } from "./components/OrderContens";
-import { menuItems } from "./data/db";
-import { useOrder } from "./hooks/useOrder";
-import type { MenuItemI } from "./types";
-import { OrderTotals } from './components/OrderTotals';
+import { OrderContents } from "./components/OrderContens";
 import { PropinaPorcentaje } from "./components/PropinaPorcentaje";
+import { OrderTotals } from "./components/OrderTotals";
+import { useOrder } from "./hooks/useOrder";
+import { menuItems } from "./data/db";
+import type { MenuItemI } from "./types";
 
 function App() {
-
-  const { addItem, order, deleteItem,propina,setPropina,guardarOrden } = useOrder();
+  const { addItem, order, deleteItem, propina, setPropina, guardarOrden } =
+    useOrder();
 
   return (
-    <>
-      <header className="bg-teal-400 py-5">
-        <h1 className="text-center text-4xl font-black">
-          Calculadora de propinas
+    <div className="min-h-screen text-slate-900 dark:text-slate-100 bg-gradient-to-b from-teal-100 to-white dark:from-slate-900 dark:to-slate-800">
+      <header className="bg-gradient-to-r from-teal-500 to-teal-600 py-6 shadow-md dark:from-teal-700 dark:to-teal-800">
+        <h1 className="text-center text-3xl font-extrabold tracking-tight text-white md:text-4xl">
+          Calculadora de Propinas
         </h1>
       </header>
-      <main className="md:flex-row flex flex-col max-w-7xl mx-auto py-3 md:py-10 space-x-5 px-5 xl:px-0">
-        <div className="md:w-1/2">
-          <h2 className="text-4xl font-black">Menú</h2>
-          <div className="space-y-2 mt-5 mb-5 md:mb-0">
-           {menuItems.map((item:MenuItemI) => (
-             <MenuItem key={item.id} item={item} addItem={addItem} />
-            ))
-          }
-          </div>
-        </div>
-        <div className="md:w-1/2">
-          <div className=" border-slate-300 md:pl-2 pr-5 md:pr-0 pb-5 rounded-lg ">
-            <OrderContens order={order} deleteItem={deleteItem}  />
 
-            {order.length > 0 ? (<PropinaPorcentaje setPropina={setPropina} propina={propina}/>):(<div></div>)}
-            {order.length > 0 ? (<OrderTotals order={order} propina={propina} guardarOrden={guardarOrden}/>):(<div></div>)}
-          
+      <main className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-6 py-10 md:grid-cols-2">
+        <section>
+          <h2 className="mb-6 text-2xl font-bold">Menú</h2>
+          <div className="space-y-3">
+            {menuItems.map((item: MenuItemI) => (
+              <MenuItem key={item.id} item={item} addItem={addItem} />
+            ))}
           </div>
+        </section>
 
-        </div>
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <h2 className="mb-4 text-2xl font-bold">Tu Orden</h2>
+          <OrderContents order={order} deleteItem={deleteItem} />
+
+          {order.length > 0 && (
+            <>
+              <PropinaPorcentaje propina={propina} setPropina={setPropina} />
+              <OrderTotals order={order} propina={propina} guardarOrden={guardarOrden} />
+            </>
+          )}
+        </section>
       </main>
-    </>
+    </div>
   );
 }
 

@@ -1,48 +1,28 @@
 import { useState } from "react";
-import { MenuItemI, orderItem } from "../types";
-
-
-
+import { MenuItemI, OrderItem } from "../types";
 
 export const useOrder = () => {
+  const [order, setOrder] = useState<OrderItem[]>([]);
+  const [propina, setPropina] = useState(0.1);
 
-    const [order, setOrder] = useState<orderItem[]>([]);
-    const [propina,setPropina] = useState(0.1)
+  const addItem = (item: MenuItemI) =>
+    setOrder((prev) => {
+      const existing = prev.find((i) => i.id === item.id);
+      if (existing) {
+        return prev.map((i) =>
+          i.id === item.id ? { ...i, cantidad: i.cantidad + 1 } : i
+        );
+      }
+      return [...prev, { ...item, cantidad: 1 }];
+    });
 
-    const addItem = (item: MenuItemI) => {
+  const deleteItem = (id: MenuItemI["id"]) =>
+    setOrder((prev) => prev.filter((i) => i.id !== id));
 
-        const existItem = order.find((orderItem) => orderItem.id === item.id);
+  const guardarOrden = () => {
+    setOrder([]);
+    setPropina(0.1);
+  };
 
-        if (!existItem) {
-            const newItems = { ...item, cantidad: 1 };
-            setOrder([...order, newItems]);
-        } else {
-            const updateOrder = order.map((orderItem) => {
-                if (orderItem.id === item.id) {
-                    return { ...orderItem, cantidad: orderItem.cantidad + 1 }; // Devuelvo el objeto actualizado
-                } else {
-                    return orderItem; // Devuelvo el objeto sin cambios
-                }
-            });
-    
-            setOrder(updateOrder); // No olvides actualizar el estado
-        }
-    }
-
-    const deleteItem =(id:MenuItemI['id'])=>{
-        setOrder(order.filter(item=> item.id!==id ))
-    }
-
-    const guardarOrden =()=>{
-       setOrder([])
-       setPropina(0.1)
-    }
-    return {
-        order,
-        propina,
-        setPropina,
-        addItem,
-        deleteItem,
-        guardarOrden
-    }
-}
+  return { order, propina, setPropina, addItem, deleteItem, guardarOrden };
+};

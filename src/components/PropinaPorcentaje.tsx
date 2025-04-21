@@ -1,34 +1,40 @@
+interface Props {
+  propina: number;
+  setPropina: (value: number) => void;
+}
+
 const options = [
-  { id: "tip-10", value: 0.1, label: " 10%" },
-  { id: "tip-20", value: 0.2, label: " 20%" },
-  { id: "tip-30", value: 0.5, label: " 50%" },
-];
+  { id: "tip-10", value: 0.1, label: "10%" },
+  { id: "tip-20", value: 0.2, label: "20%" },
+  { id: "tip-50", value: 0.5, label: "50%" },
+] as const;
 
-type PropinaPorcentajeProps = {
-  setPropina: React.Dispatch<React.SetStateAction<number>>;
-  propina:number
-};
-
-export const PropinaPorcentaje = ({ setPropina, propina }: PropinaPorcentajeProps) => {
+export function PropinaPorcentaje({ propina, setPropina }: Props) {
   return (
-    <>
-      <h3 className="font-black text-xl md:text-2xl">Propina:</h3>
-
-      <form action="submit" className="space-y-3">
-        {options.map((option) => (
-          <div key={option.id} className="flex items-center space-x-1">
-            <label htmlFor={option.id}>{option.label}</label>
+    <fieldset className="mt-8">
+      <legend className="mb-4 text-lg font-bold text-slate-900 dark:text-slate-100">Propina</legend>
+      <div className="grid grid-cols-3 gap-3">
+        {options.map((o) => (
+          <label
+            key={o.id}
+            className={`flex cursor-pointer items-center justify-center rounded-xl border p-3 font-semibold transition ${
+              propina === o.value
+                ? "border-teal-600 bg-teal-50 dark:border-teal-500 dark:bg-teal-900/20"
+                : "border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-700"
+            }`}
+          >
             <input
-              id={option.id}
               type="radio"
-              name="tip"
-              value={option.value}
-              onChange={e=>setPropina(+e.target.value)}
-              checked={option.value===propina}
+              className="sr-only"
+              name="propina"
+              value={o.value}
+              checked={propina === o.value}
+              onChange={() => setPropina(o.value)}
             />
-          </div>
+            {o.label}
+          </label>
         ))}
-      </form>
-    </>
+      </div>
+    </fieldset>
   );
-};
+}

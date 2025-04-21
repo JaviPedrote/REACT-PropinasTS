@@ -1,44 +1,40 @@
-import { orderItem } from "../types";
-import { MenuItemI } from '../types/index';
+import { OrderItem } from "../types";
+import { formatCurrency } from "../utils/formatCurrency";
 
-type orderProps = {
-  order: orderItem[];
-  deleteItem: (id: MenuItemI['id']) => void;
-};
+interface Props {
+  order: OrderItem[];
+  deleteItem: (id: OrderItem["id"]) => void;
+}
 
-export const OrderContens = ({ order , deleteItem }: orderProps) => {
+export function OrderContents({ order, deleteItem }: Props) {
+  if (order.length === 0) {
+    return <p className="text-center italic">Aún no has añadido productos.</p>;
+  }
+
   return (
-    <>
-      <div className="text-4xl font-black">Ticket</div>
-      <div className=" mt-5 ">
-        {order.length === 0 ? (
-          <p className="text-center">No hay productos en el ticket</p>
-        ) : (
-          order.map((item) => (
-            <div
-              key={item.id}
-              className="flex py-3 justify-between border-t-2 border-gray-200 p-2 last-of-type:border-b-2"
-            >
-              <div>
-                <p className="lg:text-lg">
-                  {item.name} - {item.price}€
-                </p>
-                <p className="font-bold">
-                  Cantidad: {item.cantidad} - {item.cantidad * item.price}€
-                </p>
-              </div>
-              <div className="flex items-center">
-                <button
-                  onClick={() => deleteItem(item.id)}
-                  className="flex justify-center items-center text-red-600 w-6 h-6 font-black cursor-pointer"
-                >
-                    X
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    </>
+    <ul className="space-y-3">
+      {order.map((item) => (
+        <li
+          key={item.id}
+          className="flex items-center justify-between rounded-lg border border-slate-200 p-3 dark:border-slate-700"
+        >
+          <div>
+            <p className="font-medium">
+              {item.name} — {formatCurrency(item.price)}
+            </p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Cantidad: {item.cantidad} · {formatCurrency(item.cantidad * item.price)}
+            </p>
+          </div>
+          <button
+            aria-label={`Eliminar ${item.name}`}
+            onClick={() => deleteItem(item.id)}
+            className="grid h-7 w-7 place-content-center rounded-full border border-red-400 text-xs font-bold text-red-600 transition hover:bg-red-50 dark:border-red-600 dark:hover:bg-red-900/20"
+          >
+            &times;
+          </button>
+        </li>
+      ))}
+    </ul>
   );
-};
+}
